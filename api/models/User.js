@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
     {
-        username : {
+        userId : {
             type : String,
             require : true,
             uniquie : true
@@ -17,7 +17,8 @@ const UserSchema = new mongoose.Schema(
             require : true,
         },
         salt : {
-            type : String
+            type : String,
+            require : true
         },
         profilePic : {
             type : String,
@@ -26,5 +27,12 @@ const UserSchema = new mongoose.Schema(
     },
     {timestamps : true}
 );
+
+UserSchema.methods.serialize = function() {
+    const data = this.toJSON();
+    delete data.salt;
+    delete data.password;
+    return data;
+}
 
 module.exports = mongoose.model("User", UserSchema);
