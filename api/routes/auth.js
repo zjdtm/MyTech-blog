@@ -8,6 +8,24 @@ router.post("/register", async(req, res)=>{
 
     const { userId, password } = req.body;
 
+    // util.promisify : 비동기로 돌려주는 함수를 promise로 감싸주지 않고 사용할 수 있다.
+    const randomBytesPromise = util.promisify(crypto.randomBytes);
+    const pbkdf2Promise = util.promisify(crypto.pbkdf2);
+
+    // salt 생성
+    const createSalt = async () => {
+        const buf = await randomBytesPromise(64);
+        return buf.toString("base64");
+    };
+
+    // 비밀번호 암호화
+    const createHashedPassword = async (password) => {
+        const salt = await createSalt();
+        const key = await pbkdf2Promise(password, salt, 13579, 64, 'sha512');
+        const hashedPassword = key.toString("base64");
+        return{ hashedPassword, salt};
+    };
+
     try{
         // 중복 회원 가입 방지
         const exists = await User.findOne({userId});
@@ -15,24 +33,6 @@ router.post("/register", async(req, res)=>{
             res.status(409).json("중복된 회원입니다.");
             return;
         }
-
-             // util.promisify : 비동기로 돌려주는 함수를 promise로 감싸주지 않고 사용할 수 있다.
-        const randomBytesPromise = util.promisify(crypto.randomBytes);
-        const pbkdf2Promise = util.promisify(crypto.pbkdf2);
-
-        // salt 생성
-        const createSalt = async () => {
-            const buf = await randomBytesPromise(64);
-            return buf.toString("base64");
-        };
-
-        // 비밀번호 암호화
-        const createHashedPassword = async (password) => {
-            const salt = await createSalt();
-            const key = await pbkdf2Promise(password, salt, 13579, 64, 'sha512');
-            const hashedPassword = key.toString("base64");
-            return{ hashedPassword, salt};
-        };
        
         const { hashedPassword, salt } = await createHashedPassword(password);
 
@@ -43,14 +43,12 @@ router.post("/register", async(req, res)=>{
                 salt : salt
             });
         
-
             await newUser.save();
             // serialize() 사용해서 password & salt 제외
             const SerializeUser = newUser.serialize();
             res.status(200).json(SerializeUser);
     } catch (e) {
         res.status(500).json(e);
-        console.log(e);
     }
 
 });
