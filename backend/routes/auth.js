@@ -1,12 +1,13 @@
-const router = require("express").Router();
-const User = require("../models/User");
-const crypto = require("crypto");
-const util = require("util");
+import Router from 'koa-router';
+import crypto from 'crypto';
+import util from 'util';
+
+const api = new Router();
 
 //REGISTER
-router.post("/register", async(req, res)=>{
+api.post("/register", async(ctx)=>{
 
-    const { userId, password } = req.body;
+    const { userId, password } = ctx;
 
     // util.promisify : 비동기로 돌려주는 함수를 promise로 감싸주지 않고 사용할 수 있다.
     const randomBytesPromise = util.promisify(crypto.randomBytes);
@@ -54,7 +55,7 @@ router.post("/register", async(req, res)=>{
 });
 
 //LOGIN
-router.post("/login", async(req, res) => {
+api.post("/login", async(req, res) => {
     try{
         const user = await User.findOne({userId : req.body.userId});
         !user && res.status(400).json("존재하지 않는 회원입니다.!");
@@ -68,4 +69,4 @@ router.post("/login", async(req, res) => {
     }
 })
 
-module.exports = router;
+export default api;

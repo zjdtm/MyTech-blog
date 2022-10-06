@@ -1,13 +1,12 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema(
     {
-        userId : {
+        profilePic : {
             type : String,
-            require : true,
-            uniquie : true
+            default : "",
         },
-        email : {
+        userId : {
             type : String,
             require : true,
             uniquie : true
@@ -16,13 +15,17 @@ const UserSchema = new mongoose.Schema(
             type : String,
             require : true,
         },
+        password_confirm : {
+            type : String,
+            require : true,
+        },
+        nickname : {
+            type : String,
+            require:true,
+        },
         salt : {
             type : String,
             require : true
-        },
-        profilePic : {
-            type : String,
-            default : "",
         },
     },
     {timestamps : true}
@@ -35,4 +38,6 @@ UserSchema.methods.serialize = function() {
     return data;
 }
 
-module.exports = mongoose.model("User", UserSchema);
+// UserSchema.methods.
+const User = mongoose.model('User', UserSchema);
+export default User;
