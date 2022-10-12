@@ -6,6 +6,9 @@
 하루 하루 공부했던 내용들을 정리하는 습관을 들이기 위해서 기술 블로그를 만들게 되었습니다. 다른 좋은
 블로그 사이트도 있지만 내가 추가해보고 싶은 기능과 처음부터 다시 공부하겠다는 마음가짐으로 계획하게 되었습니다.
 
+## 흐름도 
+https://www.figma.com/file/VdFqvp1yaHNDdWvI2fotJX/blog%EC%99%80%EC%9D%B4%EC%96%B4%ED%94%84%EB%A0%88%EC%9E%84?node-id=0%3A1
+
 ## 기술 스택
 <div align="center">
   <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">
