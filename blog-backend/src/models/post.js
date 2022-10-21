@@ -7,6 +7,10 @@ const PostSchema = new Schema(
     title: String,
     body: String,
     tags: [String],
+    user: {
+      _id: mongoose.Types.ObjectId,
+      username: String,
+    },
   },
   { timestamps: true },
 );
