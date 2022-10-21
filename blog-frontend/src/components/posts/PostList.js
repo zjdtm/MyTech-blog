@@ -18,15 +18,15 @@ const Post = styled.div`
   gap: 50px;
 `;
 
-const PostImage = styled.div`
-  flex: 1;
+// const PostImage = styled.div`
+//   flex: 1;
 
-  img {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-  }
-`;
+//   img {
+//     width: 100%;
+//     max-height: 400px;
+//     object-fit: cover;
+//   }
+// `;
 
 const PostContent = styled.div`
   flex: 1;
@@ -68,7 +68,7 @@ const PostList = () => {
     <Container>
       <Posts>
         {posts.map((post) => (
-          <Post>
+          <Post key={post.id}>
             <PostContent>
               <Link className="link" to={`/post/${post.id}`}>
                 <h1>{post.title}</h1>

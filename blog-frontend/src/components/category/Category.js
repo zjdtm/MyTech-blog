@@ -122,10 +122,10 @@ const Category = () => {
         <Button>검색</Button>
       </Search>
       <CategoryCheckBox>
-        {techstacks.map((tech, index) => (
-          <div className={`checkbox_${index}`}>
-            <input id={`checkbox-${index}`} type={'checkbox'} />
-            <label for={`checkbox-${index}`}>
+        {techstacks.map((tech) => (
+          <div className={`checkbox_${tech}`} key={tech}>
+            <input id={`checkbox-${tech}`} type={'checkbox'} />
+            <label htmlFor={`checkbox-${tech}`}>
               <i>{tech}</i>
             </label>
           </div>
