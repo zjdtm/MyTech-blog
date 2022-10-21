@@ -5,12 +5,21 @@ import styled from 'styled-components';
 const AuthFormBlock = styled.div`
   display: flex;
   flex-direction: column;
+
+  img {
+    width: 200px;
+    height: 300px;
+    position: absolute;
+    top: -16%;
+    left: 7%;
+  }
+
   h1 {
     font-family: sans-serif;
     text-align: center;
     margin-top: 95px;
     text-transform: uppercase;
-    color: #fff;
+    /* color: #fff; */
     font-size: 2em;
     letter-spacing: 8px;
   }
@@ -48,6 +57,7 @@ const AuthForm = ({ type }) => {
   const text = textMap[type];
   return (
     <AuthFormBlock>
+      <img src="assets/img/tree.png" alt="tree" />
       <h1>{text}</h1>
       <StyledInput
         autoComplete="username"
