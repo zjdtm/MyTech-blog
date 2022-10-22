@@ -6,11 +6,12 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const Container = styled.div`
   grid-area: slide;
+  height: 100%;
 `;
 
 const StyledSlidebar = styled(Slider)`
   width: 100%;
-  height: 100%;
+  height: 80%;
   overflow: hidden;
   position: relative;
   .slick-prev::before,
@@ -70,7 +71,7 @@ const Slide = () => {
             style={{
               width: '100%',
               height: '70vh',
-              objectFit: 'cover',
+              objectFit: 'contain',
             }}
           />
         </div>
@@ -81,7 +82,7 @@ const Slide = () => {
             style={{
               width: '100%',
               height: '70vh',
-              objectFit: 'cover',
+              objectFit: 'contain',
             }}
           />
         </div>
@@ -92,7 +93,7 @@ const Slide = () => {
             style={{
               width: '100%',
               height: '70vh',
-              objectFit: 'cover',
+              objectFit: 'contain',
             }}
           />
         </div>

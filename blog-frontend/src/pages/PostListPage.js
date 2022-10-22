@@ -11,13 +11,13 @@ const Container = styled.div`
   display: grid;
   grid-auto-rows: minmax(100px, auto);
   grid-template-areas:
-    'header header header'
-    'slide slide slide'
-    'chat main cat'
-    'chat main cat'
-    'footer footer footer';
-  grid-template-rows: 100px 1fr 60px;
-  grid-template-columns: 400px 1fr 300px;
+    'header header'
+    'slide slide'
+    'cat cat '
+    'chat main '
+    'footer footer ';
+  grid-template-rows: 100px 520px;
+  grid-template-columns: 500px 1fr;
 `;
 
 const PostListPage = () => {
@@ -25,9 +25,9 @@ const PostListPage = () => {
     <Container>
       <NavbarContainer />
       <Slide />
+      <CategoryContainer />
       <ChatContainer />
       <PostListContainer />
-      <CategoryContainer />
       <Footer />
     </Container>
   );

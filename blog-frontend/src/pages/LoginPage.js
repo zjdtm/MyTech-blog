@@ -1,12 +1,16 @@
 import AuthForm from 'components/auth/AuthForm';
 import AuthTemplate from 'components/auth/AuthTemplate';
+import Navbar from 'components/common/Navbar';
 import React from 'react';
 
 const LoginPage = () => {
   return (
-    <AuthTemplate>
-      <AuthForm type="login" />
-    </AuthTemplate>
+    <>
+      <Navbar />
+      <AuthTemplate>
+        <AuthForm type="login" />
+      </AuthTemplate>
+    </>
   );
 };
 

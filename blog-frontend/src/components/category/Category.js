@@ -5,16 +5,19 @@ const Container = styled.div`
   grid-area: cat;
   display: flex;
   flex-direction: column;
-  height: 500px;
-  box-shadow: 0.8rem 0.8rem 1.4rem var(--greyLight-2),
-    -0.2rem -0.2rem 1.8rem var(--white);
+  margin: auto;
+  width: 80%;
+  height: 200px;
+  align-items: center;
+  box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px,
+    rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px,
+    rgba(240, 46, 170, 0.05) 25px 25px;
   border-radius: 1rem;
 `;
 
 const Search = styled.form`
   position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
 
   input {
@@ -70,6 +73,7 @@ const Button = styled.button`
 
 const CategoryCheckBox = styled.div`
   height: 70px;
+  display: flex;
   justify-content: center;
 
   .checkbox_0 label:hover i,

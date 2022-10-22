@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const AuthTemplateBlock = styled.div`
-  background: #ffff;
-  height: 100vh;
+  background: #e0e3da;
+  height: 120vh;
 `;
 
 const AuthTemplateContainer = styled.div`
