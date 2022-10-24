@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { register, reset } from '../../features/auth/authSlice';
+import Spinner from 'components/common/Spinner';
 
 const AuthFormBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-
   img {
     width: 200px;
     height: 300px;
     position: absolute;
-    top: -16%;
-    left: 7%;
+    top: -23%;
+    left: 25%;
   }
 
   h1 {
@@ -19,28 +21,35 @@ const AuthFormBlock = styled.div`
     text-align: center;
     margin-top: 95px;
     text-transform: uppercase;
-    /* color: #fff; */
     font-size: 2em;
     letter-spacing: 8px;
   }
 `;
 
+const LoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  align-items: center;
+  width: 500px;
+  height: 400px;
+`;
+
 const StyledInput = styled.input`
-  background: white;
-  width: 75%;
-  color: #fff;
   border-radius: 10px;
   padding: 9px;
   margin: 10px auto;
-  &::placeholder {
+  ::placeholder {
     color: rgba(#fff, 1);
     letter-spacing: 2px;
     font-size: 1.3em;
-    font-weight: 100;
   }
-  &:focus {
-    color: gray;
-  }
+`;
+
+const Button = styled.button`
+  border-radius: 10px;
+  background-color: black;
+  color: white;
 `;
 
 const AuthFooter = styled.div`
@@ -55,29 +64,93 @@ const textMap = {
 
 const AuthForm = ({ type }) => {
   const text = textMap[type];
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    passwordConfirm: '',
+  });
+
+  const { email, password, passwordConfirm } = formData;
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth,
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess || user) {
+      navigate('/');
+    }
+
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
+
+  const onChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    if (password !== passwordConfirm) {
+      toast.error('Password do not match');
+    } else {
+      const userData = {
+        email,
+        password,
+      };
+
+      dispatch(register(userData));
+    }
+  };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <AuthFormBlock>
       <img src="assets/img/tree.png" alt="tree" />
       <h1>{text}</h1>
-      <StyledInput
-        autoComplete="username"
-        name="username"
-        placeholder="아이디"
-      />
-      <StyledInput
-        autoComplete="new-password"
-        name="password"
-        placeholder="비밀번호"
-        type="password"
-      />
-      {type === 'register' && (
+      <LoginForm onSubmit={onSubmit}>
         <StyledInput
-          autoComplete="new-password"
-          name="passwordConfirm"
-          placeholder="비밀번호 확인"
-          type="password"
+          autoComplete="email"
+          name="email"
+          placeholder="이메일"
+          value={email}
+          onChange={onChange}
         />
-      )}
+        <StyledInput
+          autoComplete="password"
+          name="password"
+          placeholder="비밀번호"
+          type="password"
+          value={password}
+          onChange={onChange}
+        />
+        {type === 'register' && (
+          <StyledInput
+            autoComplete="password"
+            name="passwordConfirm"
+            placeholder="비밀번호 확인"
+            type="password"
+            value={passwordConfirm}
+            onChange={onChange}
+          />
+        )}
+        <Button type="submit" className="submitbtn">
+          Submit
+        </Button>
+      </LoginForm>
       <AuthFooter>
         {type === 'login' ? (
           <Link to="/register">회원가입</Link>

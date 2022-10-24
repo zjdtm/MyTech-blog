@@ -4,6 +4,10 @@ import User from '../../models/user.js';
 export const register = async (ctx) => {
   const schema = Joi.object({
     username: Joi.string().alphanum().min(3).max(20).required(),
+    email: Joi.string().email({
+      minDomainSegments: 2,
+      tlds: { allow: ['com', 'net'] },
+    }),
     password: Joi.string()
       // 8 ~ 16자 영문,숫자,특수기호 조합
       .pattern(
@@ -20,7 +24,7 @@ export const register = async (ctx) => {
     return;
   }
 
-  const { username, password } = ctx.request.body;
+  const { username, email, password } = ctx.request.body;
   try {
     const exists = await User.findByUsername(username);
     if (exists) {
@@ -29,6 +33,7 @@ export const register = async (ctx) => {
     }
     const user = new User({
       username,
+      email,
     });
 
     await user.setPassword(password);
