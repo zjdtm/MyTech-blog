@@ -1,7 +1,14 @@
+import Editor from 'components/write/Editor';
+import NavbarContainer from 'containers/common/NavbarContainer';
 import React from 'react';
 
 const WritePage = () => {
-  return <div>글쓰기</div>;
+  return (
+    <>
+      <NavbarContainer />
+      <Editor />
+    </>
+  );
 };
 
 export default WritePage;
