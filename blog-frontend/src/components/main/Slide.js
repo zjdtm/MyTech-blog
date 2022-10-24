@@ -6,12 +6,12 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const Container = styled.div`
   grid-area: slide;
-  height: 100%;
+  height: 120%;
 `;
 
 const StyledSlidebar = styled(Slider)`
   width: 100%;
-  height: 80%;
+  height: 90%;
   overflow: hidden;
   position: relative;
   .slick-prev::before,

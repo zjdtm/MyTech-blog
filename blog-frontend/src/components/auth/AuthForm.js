@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { register, reset } from '../../features/auth/authSlice';
+import { login, register, reset } from '../../features/auth/authSlice';
 import Spinner from 'components/common/Spinner';
 
 const AuthFormBlock = styled.div`
@@ -66,11 +66,12 @@ const AuthForm = ({ type }) => {
   const text = textMap[type];
   const [formData, setFormData] = useState({
     email: '',
+    username: '',
     password: '',
     passwordConfirm: '',
   });
 
-  const { email, password, passwordConfirm } = formData;
+  const { email, username, password, passwordConfirm } = formData;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -99,17 +100,26 @@ const AuthForm = ({ type }) => {
   };
 
   const onSubmit = (e) => {
-    e.preventDefault();
+    if (text === '회원가입') {
+      e.preventDefault();
 
-    if (password !== passwordConfirm) {
-      toast.error('Password do not match');
+      if (password !== passwordConfirm) {
+        toast.error('Password do not match');
+      } else {
+        const userData = {
+          email,
+          username,
+          password,
+        };
+
+        dispatch(register(userData));
+      }
     } else {
       const userData = {
-        email,
+        username,
         password,
       };
-
-      dispatch(register(userData));
+      dispatch(login(userData));
     }
   };
 
@@ -123,12 +133,21 @@ const AuthForm = ({ type }) => {
       <h1>{text}</h1>
       <LoginForm onSubmit={onSubmit}>
         <StyledInput
-          autoComplete="email"
-          name="email"
-          placeholder="이메일"
-          value={email}
+          autoComplete="username"
+          name="username"
+          placeholder="아이디"
+          value={username}
           onChange={onChange}
         />
+        {type === 'register' && (
+          <StyledInput
+            autoComplete="email"
+            name="email"
+            placeholder="이메일"
+            value={email}
+            onChange={onChange}
+          />
+        )}
         <StyledInput
           autoComplete="password"
           name="password"

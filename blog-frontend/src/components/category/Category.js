@@ -5,7 +5,7 @@ const Container = styled.div`
   grid-area: cat;
   display: flex;
   flex-direction: column;
-  margin: auto;
+  margin: 50px auto;
   width: 80%;
   height: 200px;
   align-items: center;
