@@ -11,6 +11,7 @@ const PostSchema = new Schema(
       _id: mongoose.Types.ObjectId,
       username: String,
     },
+    likeCount: Number,
   },
   { timestamps: true },
 );

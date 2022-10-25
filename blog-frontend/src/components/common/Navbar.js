@@ -34,66 +34,94 @@ const NavLinks = styled.div`
 
 const StyledLink = styled(Link)`
   button {
-    color: #ffff;
-    border-radius: 10px;
-    padding: 10px 25px;
-    font-weight: 500;
-    background: transparent;
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid #1a1a1a;
+    border-radius: 15px;
+    box-sizing: border-box;
+    color: #3b3b3b;
     cursor: pointer;
-    transition: 0.5s;
-    position: relative;
     display: inline-block;
-    box-shadow: 0 0 20px #eee;
+    font-family: Roobert, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+      'Segoe UI Symbol';
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    margin: 0;
+    min-height: 60px;
+    min-width: 0;
     outline: none;
-    background-size: 200% auto;
-    background-image: linear-gradient(
-      to right,
-      #ffeeee 0%,
-      #ddefbb 51%,
-      #ffeeee 100%
-    );
-    line-height: 42px;
-    border: none;
+    padding: 16px 24px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: 100%;
+    will-change: transform;
 
-    :hover {
-      background-position: right center; /* change the direction of the change here */
-      color: #fff;
-      text-decoration: none;
+    :disabled {
+      pointer-events: none;
     }
 
-    span {
-      font-size: medium;
-      font-weight: bolder;
+    :hover {
+      color: #fff;
+      background-color: #1a1a1a;
+      box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+      transform: translateY(-2px);
+
+      :active {
+        box-shadow: none;
+        transform: translateY(0);
+      }
     }
   }
 `;
 
 const Button = styled.button`
-  color: #ffff;
-  border-radius: 10px;
-  padding: 10px 25px;
-  font-weight: 500;
-  background: transparent;
+  appearance: none;
+  background-color: transparent;
+  border: 2px solid #1a1a1a;
+  border-radius: 15px;
+  box-sizing: border-box;
+  color: #3b3b3b;
   cursor: pointer;
-  transition: 0.5s;
-  position: relative;
   display: inline-block;
-  box-shadow: 0 0 20px #eee;
+  font-family: 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  min-height: 60px;
+  min-width: 0;
   outline: none;
-  background-size: 200% auto;
-  background-image: linear-gradient(
-    to right,
-    #ffeeee 0%,
-    #ddefbb 51%,
-    #ffeeee 100%
-  );
-  line-height: 42px;
-  border: none;
+  padding: 16px 24px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 100%;
+  will-change: transform;
+
+  :disabled {
+    pointer-events: none;
+  }
 
   :hover {
-    background-position: right center; /* change the direction of the change here */
     color: #fff;
-    text-decoration: none;
+    background-color: #1a1a1a;
+    box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+    transform: translateY(-2px);
+
+    :active {
+      box-shadow: none;
+      transform: translateY(0);
+    }
   }
 `;
 
@@ -117,7 +145,13 @@ const Navbar = () => {
         ></Logo>
         <NavLinks>
           {user ? (
-            <Button onClick={onLogout}>LOGGOUT</Button>
+            <>
+              <span>{user.username}님 환영합니다</span>
+              <Link to="/write">
+                <span>글작성</span>
+              </Link>
+              <Button onClick={onLogout}>LOGGOUT</Button>
+            </>
           ) : (
             <>
               <StyledLink to="/login">
