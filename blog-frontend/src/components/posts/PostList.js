@@ -1,8 +1,15 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from '../../../node_modules/react-router-dom/dist/index';
-import { selectAllPosts } from 'features/posts/postsSlice';
+import {
+  selectAllPosts,
+  getPostsStatus,
+  getPostsError,
+  fetchPosts,
+} from 'features/posts/postsSlice';
+import { toast } from 'react-toastify';
+import Spinner from 'components/common/Spinner';
 
 const Container = styled.div`
   grid-area: main;
@@ -25,21 +32,37 @@ const PostContent = styled.div`
 `;
 
 const PostList = () => {
-  const posts = useSelector(selectAllPosts);
+  const dispatch = useDispatch();
+
+  const { posts, isLoading, isError, message } = useSelector(
+    (state) => state.posts,
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    dispatch(fetchPosts());
+  }, [isError, message, dispatch]);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <Container>
       <Posts>
-        {/* {posts.map((post) => (
-          <Post key={post.id}>
+        {posts.map((post) => (
+          <Post key={post._id}>
             <PostContent>
-              <Link className="link" to={`/post/${post.id}`}>
+              <Link className="link" to={`/@${post.user.username}/${post._id}`}>
                 <h1>{post.title}</h1>
-                <p>{post.body}</p>
+                <p>{post.body.substring(0, 50)}...</p>
               </Link>
             </PostContent>
           </Post>
-        ))} */}
+        ))}
       </Posts>
     </Container>
   );

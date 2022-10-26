@@ -1,4 +1,4 @@
-import Editor from 'components/write/Editor';
+import Editor from 'components/posts/PostWrite';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { nanoid } from '@reduxjs/toolkit';

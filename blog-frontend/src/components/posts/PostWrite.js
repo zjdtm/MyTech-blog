@@ -1,8 +1,9 @@
 import { createPost } from 'features/posts/postsSlice';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const TitleInput = styled.input`
@@ -15,10 +16,10 @@ const TitleInput = styled.input`
   color: #9dbfaf;
 `;
 
-// const Quill = styled(ReactQuill)`
-//   width: 100%;
-//   height: 500px;
-// `;
+const Quill = styled(ReactQuill)`
+  width: 100%;
+  height: 500px;
+`;
 
 const TagBox = styled.div`
   margin: 50px auto;
@@ -97,38 +98,38 @@ const ButtonsBox = styled.div`
 `;
 
 const Editor = () => {
-  // const modules = {
-  //   toolbar: [
-  //     [{ header: [1, 2, false] }],
-  //     ['bold', 'italic', 'underline', 'Strike', 'blockquote'],
-  //     [
-  //       { list: 'ordered' },
-  //       { list: 'bullet' },
-  //       { indent: '-1' },
-  //       { indent: '+1' },
-  //     ],
-  //     ['link', 'image'],
-  //     [{ align: [] }, { color: [] }, { background: [] }],
-  //     ['clean'],
-  //   ],
-  // };
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ['bold', 'italic', 'underline', 'Strike', 'blockquote'],
+      [
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
+      ],
+      ['link', 'image'],
+      [{ align: [] }, { color: [] }, { background: [] }],
+      ['clean'],
+    ],
+  };
 
-  // const formats = [
-  //   'header',
-  //   'bold',
-  //   'italic',
-  //   'underline',
-  //   'strike',
-  //   'blockquote',
-  //   'list',
-  //   'bullet',
-  //   'indent',
-  //   'link',
-  //   'image',
-  //   'align',
-  //   'color',
-  //   'background',
-  // ];
+  const formats = [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
+    'align',
+    'color',
+    'background',
+  ];
 
   const dispatch = useDispatch();
 
@@ -138,7 +139,7 @@ const Editor = () => {
   const { user } = useSelector((state) => state.auth);
 
   const onTitleChanged = (e) => setTitle(e.target.value);
-  const onBodyChanged = (e) => setBody(e.target.value);
+  const onBodyChanged = (html) => setBody(html);
   const onTagChanged = (e) => {
     if (e.key !== 'Enter') return;
     const value = e.target.value;
@@ -150,6 +151,8 @@ const Editor = () => {
     setTags(tags.filter((el, i) => i !== index));
   };
 
+  const navigate = useNavigate();
+
   const onSavePost = () => {
     if (title && body && tags) {
       const postData = {
@@ -158,13 +161,12 @@ const Editor = () => {
         tags,
       };
       dispatch(createPost(postData));
+      navigate(`@/${user.username}/${user.id}`);
       setTitle('');
       setBody('');
       setTags([]);
     }
   };
-
-  const check = Boolean(title) && Boolean(body) && Boolean(user);
 
   return (
     <>
@@ -176,7 +178,7 @@ const Editor = () => {
         placeholder="제목을 입력하세요"
         onChange={onTitleChanged}
       />
-      {/* <Quill
+      <Quill
         theme="snow"
         modules={modules}
         formats={formats}
@@ -184,13 +186,6 @@ const Editor = () => {
         onChange={(content, delta, source, editor) =>
           onBodyChanged(editor.getHTML())
         }
-      /> */}
-      <textarea
-        id="body"
-        name="body"
-        value={body}
-        placeholder="본문을 입력하세요"
-        onChange={onBodyChanged}
       />
       <TagBox>
         {tags.map((tag, index) => (

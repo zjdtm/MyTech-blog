@@ -75,8 +75,6 @@ export const list = async (ctx) => {
     ...(tag ? { tags: tag } : {}),
   };
 
-  console.log(query);
-
   try {
     const posts = await Post.find(query)
       .sort({ _id: -1 })

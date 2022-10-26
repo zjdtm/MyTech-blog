@@ -11,7 +11,10 @@ const PostSchema = new Schema(
       _id: mongoose.Types.ObjectId,
       username: String,
     },
-    likeCount: Number,
+    like: {
+      love: 0,
+      view: 0,
+    },
   },
   { timestamps: true },
 );

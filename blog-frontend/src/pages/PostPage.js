@@ -1,7 +1,14 @@
+import PostViewer from 'components/posts/PostViewer';
+import NavbarContainer from 'containers/common/NavbarContainer';
 import React from 'react';
 
 function PostPage() {
-  return <div>포스트 읽기</div>;
+  return (
+    <>
+      <NavbarContainer />
+      <PostViewer />
+    </>
+  );
 }
 
 export default PostPage;

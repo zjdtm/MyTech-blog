@@ -1,4 +1,4 @@
-import Editor from 'components/write/Editor';
+import Editor from 'components/posts/PostWrite';
 import NavbarContainer from 'containers/common/NavbarContainer';
 import React from 'react';
 

@@ -140,7 +140,7 @@ const Navbar = () => {
     <Container>
       <Nav>
         <Logo
-          src="assets/img/teco.png"
+          src="/assets/img/teco.png"
           onClick={() => (window.location.href = '/')}
         ></Logo>
         <NavLinks>
