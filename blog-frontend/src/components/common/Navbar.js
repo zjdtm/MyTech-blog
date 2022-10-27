@@ -166,13 +166,17 @@ const Navbar = () => {
               </StyledLink>
             </>
           )}
-          <StyledLink to="/">
+          <StyledLink to="/mypage">
             <button>
               <span>COMMUNITY</span>
             </button>
           </StyledLink>
           <StyledLink>
-            <button>
+            <button
+              onClick={() =>
+                window.open('https://github.com/zjdtm/MyTech-blog')
+              }
+            >
               <span>GITHUB</span>
             </button>
           </StyledLink>

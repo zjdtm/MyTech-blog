@@ -5,13 +5,10 @@ const PostSchema = new Schema(
     title: String,
     body: String,
     tags: [String],
+    likes: [String],
     user: {
       _id: mongoose.Types.ObjectId,
       username: String,
-    },
-    like: {
-      love: 0,
-      view: 0,
     },
   },
   { timestamps: true },

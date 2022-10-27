@@ -137,3 +137,20 @@ export const update = async (ctx) => {
     ctx.throw(500, e);
   }
 };
+
+export const like = async (ctx) => {
+  try {
+    const post = await Post.findById(ctx.params.id);
+    if (!post.likes.includes(ctx.state.user._id)) {
+      await post.updateOne({ $push: { likes: ctx.state.user._id } });
+      ctx.body = '이 게시물에 좋아요를 하였습니다.';
+      ctx.status = 200;
+    } else {
+      await post.updateOne({ $pull: { likes: ctx.state.user._id } });
+      ctx.body = '이 게시물에 좋아요를 취소하였습니다.';
+      ctx.status = 200;
+    }
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};

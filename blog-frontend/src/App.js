@@ -7,6 +7,7 @@ import PostListPage from './pages/PostListPage';
 import PostPage from './pages/PostPage';
 import RegisterPage from './pages/RegisterPage';
 import WritePage from './pages/WritePage';
+import MyPage from 'pages/MyPage';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/write" element={<WritePage />} />
         <Route path="/@:username/:postId" element={<PostPage />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
       <ToastContainer />
     </>

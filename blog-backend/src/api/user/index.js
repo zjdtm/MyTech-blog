@@ -4,10 +4,10 @@ import * as userCtrl from './user.ctrl.js';
 
 const user = new Router();
 
-user.put('/:id', checkLoggedIn, userCtrl.updateUser);
+user.patch('/:id', checkLoggedIn, userCtrl.updateUser);
 user.delete('/:id', checkLoggedIn, userCtrl.deleteUser);
-user.get('/:id', checkLoggedIn, userCtrl.getUser);
-user.post('/:id', checkLoggedIn, userCtrl.follow);
-user.post('/:id', checkLoggedIn, userCtrl.unfollow);
+user.get('/:id', userCtrl.getUser);
+user.put('/:id/follow', checkLoggedIn, userCtrl.follow);
+user.put('/:id/unfollow', checkLoggedIn, userCtrl.unfollow);
 
 export default user;

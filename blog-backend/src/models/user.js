@@ -15,7 +15,8 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    followins: Array,
+    followers: Array,
+    followings: Array,
   },
   { timestamps: true },
 );
