@@ -4,17 +4,20 @@ import User from '../../models/user.js';
 export const register = async (ctx) => {
   const schema = Joi.object({
     username: Joi.string().alphanum().min(3).max(20).required(),
-    email: Joi.string().email({
-      minDomainSegments: 2,
-      tlds: { allow: ['com', 'net'] },
-    }),
+    email: Joi.string()
+      .email({
+        minDomainSegments: 2,
+        tlds: { allow: ['com', 'net'] },
+      })
+      .required(),
     password: Joi.string()
       // 8 ~ 16자 영문,숫자,특수기호 조합
       .pattern(
         new RegExp(
           '^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[$`~!@#!%*#^&\\(\\)-_=+]).{8,16}$',
         ),
-      ),
+      )
+      .required(),
   });
 
   const result = schema.validate(ctx.request.body);

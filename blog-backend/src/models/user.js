@@ -2,11 +2,23 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const UserSchema = new Schema({
-  username: String,
-  email: String,
-  hashedPassword: String,
-});
+const UserSchema = new Schema(
+  {
+    username: String,
+    email: String,
+    hashedPassword: String,
+    profilePicture: {
+      type: String,
+      default: '',
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    followins: Array,
+  },
+  { timestamps: true },
+);
 
 UserSchema.methods.setPassword = async function (password) {
   const hash = await bcrypt.hash(password, 10);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { login, register, reset } from '../../features/auth/authSlice';
@@ -109,7 +109,13 @@ const AuthForm = ({ type }) => {
       e.preventDefault();
 
       if (password !== passwordConfirm) {
-        toast.error('Password do not match');
+        toast.error('패스워드가 일치하지 않습니다', {
+          position: 'top-center',
+          autoClose: 8000,
+          pauseOnHover: true,
+          draggable: true,
+          theme: 'dark',
+        });
       } else {
         const userData = {
           email,
@@ -182,6 +188,7 @@ const AuthForm = ({ type }) => {
           <Link to="/login">로그인</Link>
         )}
       </AuthFooter>
+      <ToastContainer />
     </AuthFormBlock>
   );
 };
