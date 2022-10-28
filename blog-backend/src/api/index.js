@@ -10,6 +10,6 @@ api.use('/posts', posts.routes());
 api.use('/auth', auth.routes());
 api.use('/user', user.routes());
 api.use('/conversation', conversation.routes());
-api.use('/message', message.routes());
+api.use('/messages', message.routes());
 
 export default api;

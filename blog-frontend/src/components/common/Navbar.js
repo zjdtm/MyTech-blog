@@ -133,6 +133,7 @@ const Navbar = () => {
   const onLogout = () => {
     dispatch(logout());
     dispatch(reset());
+    localStorage.clear();
     navigate('/');
   };
 

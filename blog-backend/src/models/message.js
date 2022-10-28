@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 const MessageSchema = new Schema(
   {
-    conversation: String,
+    conversationId: String,
     sender: String,
     text: String,
   },

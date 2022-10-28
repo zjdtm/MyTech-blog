@@ -2,12 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from '../../../node_modules/react-router-dom/dist/index';
-import {
-  selectAllPosts,
-  getPostsStatus,
-  getPostsError,
-  fetchPosts,
-} from 'features/posts/postsSlice';
+import { fetchPosts } from 'features/posts/postsSlice';
 import { toast } from 'react-toastify';
 import Spinner from 'components/common/Spinner';
 

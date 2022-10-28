@@ -15,3 +15,15 @@ export const postConverSation = async (ctx) => {
     ctx.throw(500, e);
   }
 };
+
+export const getConverSation = async (ctx) => {
+  try {
+    const conversation = await Conversation.find({
+      members: { $in: [ctx.params.userId] },
+    });
+    ctx.status = 200;
+    ctx.body = conversation;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};

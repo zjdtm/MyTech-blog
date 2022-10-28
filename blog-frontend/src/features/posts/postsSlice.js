@@ -114,6 +114,4 @@ export const getPostsError = (state) => state.posts.error;
 export const getPostById = (state, postId) =>
   state.posts.posts.find((post) => post._id === postId);
 
-export const { postAdd } = postsSlice.actions;
-
 export default postsSlice.reducer;
