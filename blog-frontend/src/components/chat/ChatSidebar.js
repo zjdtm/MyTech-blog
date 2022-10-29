@@ -1,12 +1,8 @@
-import {
-  Avatar,
-  Conversation,
-  ConversationList,
-  Search,
-} from '@chatscope/chat-ui-kit-react';
+import { Avatar, ConversationList, Search } from '@chatscope/chat-ui-kit-react';
 import { getChat } from 'features/chat/chatSlice';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Conversation from './Conversation';
 
 const ChatSidebar = ({ chats, user }) => {
   const [friends, Setfriends] = useState([]);
@@ -24,9 +20,7 @@ const ChatSidebar = ({ chats, user }) => {
       <Search placeholder="Search..." />
       <ConversationList>
         {friends.map((c) => (
-          <Conversation name={c}>
-            <Avatar name="Lilly" status="available" />
-          </Conversation>
+          <Conversation name={c} />
         ))}
       </ConversationList>
     </>

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { MainContainer, ChatContainer } from '@chatscope/chat-ui-kit-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getChat } from 'features/chat/chatSlice';
 import Conversation from './Conversation';
+import ChatBox from './ChatBox';
 
 const Container = styled.div`
   grid-area: chat;
-  background-color: #131324;
+  background-color: white;
   display: flex;
   border-radius: 20px;
 `;
@@ -24,9 +24,9 @@ const ChatSidebar = styled.div`
   }
 `;
 
-const ChatBox = styled.div`
-  background-color: red;
-  height: 500px;
+const ChatContent = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const Chat = () => {
@@ -48,7 +48,12 @@ const Chat = () => {
         <input placeholder="Search for friends" className="chatMenuInput" />
         <Conversation />
       </ChatSidebar>
-      <ChatBox>2</ChatBox>
+      <ChatContent>
+        <ChatBox />
+        <ChatBox />
+        <ChatBox />
+        <ChatBox />
+      </ChatContent>
     </Container>
   );
 };
