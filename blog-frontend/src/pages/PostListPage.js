@@ -17,7 +17,7 @@ const Container = styled.div`
     'chat main '
     'footer footer ';
   grid-template-rows: 100px 520px;
-  grid-template-columns: 500px 1fr;
+  grid-template-columns: 750px 1fr;
 `;
 
 const PostListPage = () => {

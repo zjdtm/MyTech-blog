@@ -1,14 +1,18 @@
-import React from 'react';
+import { getUser, getUserfriend } from 'features/chat/chatSlice';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 const ConversationContainer = styled.div`
   background-color: yellow;
-  align-items: center;
+  display: flex;
   padding: 10px;
+  overflow: scroll;
 `;
 
 const ConversationItems = styled.div`
   display: flex;
+  width: 100px;
 
   :hover {
     background-color: orange;
@@ -28,7 +32,18 @@ const ConversationItems = styled.div`
   }
 `;
 
-const Conversation = () => {
+const Conversation = ({ conversation, currentUser }) => {
+  const dispatch = useDispatch();
+  const { friendUsers } = useSelector((state) => state.chats);
+
+  useEffect(() => {
+    if (currentUser) {
+      const friendId = conversation.members.find((m) => m !== currentUser._id);
+
+      dispatch(getUserfriend(friendId));
+    }
+  }, [conversation, currentUser, dispatch]);
+
   return (
     <ConversationContainer>
       <ConversationItems>

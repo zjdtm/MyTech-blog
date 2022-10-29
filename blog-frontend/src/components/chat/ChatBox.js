@@ -4,11 +4,11 @@ import styled from 'styled-components';
 const ChatBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin: 10px;
+  align-items: ${(props) => (props.props === true ? 'flex-end' : '')};
 `;
 
 const ChatTop = styled.div`
-  display: flex;
-
   img {
     width: 32px;
     height: 32px;
@@ -18,6 +18,7 @@ const ChatTop = styled.div`
   }
 
   p {
+    /* align-items: ${(props) => (props.own ? 'flex-end' : '')}; */
     padding: 10px;
     border-radius: 20px;
     background-color: #1877f2;
@@ -33,18 +34,10 @@ const ChatBottom = styled.div`
 
 const ChatBox = ({ own }) => {
   return (
-    <ChatBoxContainer>
+    <ChatBoxContainer props={own}>
       <ChatTop>
         <img src="/assets/img/banana.png" alt="프로필 이미지" />
-        <p>
-          MessageTextMessageTextMessageTex
-          tMessageTextMessageTextMessageTextMessa
-          geTextMessageTextMessageTextMessageTextMess
-          ageTextMessageTextMessageTextMessageTextMes
-          sageTextMessageTextMessageTextMessageTextMes
-          sageTextMessageTextMessageTextMessageTextMes
-          sageTextMessageTextMessageText
-        </p>
+        <p>MessageTextMessageTextMessageTex MessageTextMessageTextMessageTex</p>
       </ChatTop>
       <ChatBottom>1hour ago</ChatBottom>
     </ChatBoxContainer>

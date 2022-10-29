@@ -52,10 +52,16 @@ export const deleteUser = async (ctx) => {
   }
 };
 
-export const getUser = async (ctx) => {
+export const getUserfriend = async (ctx) => {
+  const userId = ctx.query.userId;
+  const username = ctx.query.username;
+
   try {
-    const user = await User.findById(ctx.params.id);
-    ctx.body = user;
+    const user = userId
+      ? await User.findById(userId)
+      : await User.findOne({ username: username });
+    const { hashedPassword, updatedAt, ...others } = user._doc;
+    ctx.body = others;
     ctx.status = 200;
   } catch (e) {
     ctx.throw(500, e);
