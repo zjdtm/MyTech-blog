@@ -18,22 +18,37 @@ const ChatSidebar = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-
-  input {
-    width: 100%;
-    height: 4vh;
-    align-items: center;
-    padding: 10px 0;
-    border: none;
-    border-bottom: 1px solid gray;
-  }
 `;
 
 const ChatRoomContainer = styled.div`
   width: 101%;
   height: 15vh;
   display: flex;
-  overflow: scroll;
+`;
+
+const ChatRoom = styled.div`
+  width: 30%;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffd400;
+  margin: 10px;
+  border-radius: 20%;
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
+`;
+
+const ChatImage = styled.img`
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+
+  &:hover {
+    width: 90px;
+    height: 90px;
+  }
 `;
 
 const ChatContent = styled.div`
@@ -46,6 +61,7 @@ const ChatInput = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   textarea {
     width: 80%;
     height: 90px;
@@ -74,16 +90,15 @@ const Chat = () => {
     }
   }, [user, dispatch]);
 
-  if (chats) {
-  }
-
   return (
     <Container>
       <ChatSidebar>
-        <input placeholder="Search for friends" className="chatMenuInput" />
         <ChatRoomContainer>
           {chats.map((c) => (
-            <Conversation conversation={c} currentUser={user} />
+            <ChatRoom key={c._id}>
+              <ChatImage src="/assets/img/monkey.png" alt="로고" />
+              <span>{c.members.find((m) => m !== user._id)}</span>
+            </ChatRoom>
           ))}
         </ChatRoomContainer>
       </ChatSidebar>

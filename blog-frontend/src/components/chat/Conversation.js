@@ -42,23 +42,11 @@ const Text = styled.span`
 `;
 
 const Conversation = ({ conversation, currentUser }) => {
-  const dispatch = useDispatch();
-  const { friendUsers, isLoading, isSuccess } = useSelector(
-    (state) => state.chats,
-  );
-
-  useEffect(() => {
-    const friendId = conversation.members.find((m) => m !== currentUser._id);
-
-    dispatch(getUserfriend(friendId));
-  }, [conversation.members, currentUser._id, dispatch]);
   return (
-    <>
-      <Container>
-        <Text>이미지</Text>
-        <Text>{friendUsers.username}</Text>
-      </Container>
-    </>
+    <Container>
+      <Text>이미지</Text>
+      <Text>텍스트</Text>
+    </Container>
   );
 };
 export default Conversation;
