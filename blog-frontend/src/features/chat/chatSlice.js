@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import chatService from 'features/api/chatService';
-import { act } from 'react-dom/test-utils';
 
 export const getChat = createAsyncThunk('chat/getChat', async (userId) => {
   try {
@@ -63,10 +62,13 @@ const chatSlice = createSlice({
       .addCase(getUserfriend.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.friendUsers.push(action.payload);
-        state.friendUsers = [
-          ...new Set(state.friendUsers.map(JSON.stringify)),
-        ].map(JSON.parse);
+        // state.friendUsers.push(action.payload);
+        // state.friendUsers = [
+        //   ...new Set(state.friendUsers.map(JSON.stringify)),
+        // ].map(JSON.parse);
+        if (!state.friendUsers.includes(action.payload._id)) {
+          state.friendUsers.push(action.payload);
+        }
       })
       .addCase(getUserfriend.rejected, (state, action) => {
         state.isLoading = false;

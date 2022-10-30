@@ -9,22 +9,32 @@ const Container = styled.div`
   grid-area: chat;
   border-radius: 20px;
   height: 75vh;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ChatSidebar = styled.div`
-  background-color: aliceblue;
-  height: 100px;
   margin: 10px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
 
   input {
-    width: 98%;
+    width: 100%;
+    height: 4vh;
+    align-items: center;
     padding: 10px 0;
     border: none;
     border-bottom: 1px solid gray;
   }
 `;
 
-const ConversationContainer = styled.div``;
+const ChatRoomContainer = styled.div`
+  width: 101%;
+  height: 15vh;
+  display: flex;
+  overflow: scroll;
+`;
 
 const ChatContent = styled.div`
   height: 50vh;
@@ -56,9 +66,7 @@ const ChatInput = styled.div`
 const Chat = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { chats, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.chats,
-  );
+  const { chats, isLoading, isSuccess } = useSelector((state) => state.chats);
 
   useEffect(() => {
     if (user) {
@@ -66,19 +74,18 @@ const Chat = () => {
     }
   }, [user, dispatch]);
 
+  if (chats) {
+  }
+
   return (
     <Container>
       <ChatSidebar>
-        <ConversationContainer>
-          <input placeholder="Search for friends" className="chatMenuInput" />
-          {isSuccess === true && user ? (
-            chats.map((c) => (
-              <Conversation conversation={c} currentUser={user} />
-            ))
-          ) : (
-            <Conversation />
-          )}
-        </ConversationContainer>
+        <input placeholder="Search for friends" className="chatMenuInput" />
+        <ChatRoomContainer>
+          {chats.map((c) => (
+            <Conversation conversation={c} currentUser={user} />
+          ))}
+        </ChatRoomContainer>
       </ChatSidebar>
       <ChatContent>
         <ChatBox own={true} />
