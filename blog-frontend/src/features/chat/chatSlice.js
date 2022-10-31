@@ -9,6 +9,14 @@ export const getChat = createAsyncThunk('chat/getChat', async (userId) => {
   }
 });
 
+export const createChat = createAsyncThunk('chat/createChat', async (chat) => {
+  try {
+    return await chatService.createChat(chat);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 export const getMessages = createAsyncThunk(
   'chat/getMessages',
   async (conversationId) => {
@@ -53,6 +61,11 @@ const chatSlice = createSlice({
   },
   extraReducers(builder) {
     builder
+      .addCase(createChat.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.chats = action.payload;
+      })
       .addCase(getChat.pending, (state) => {
         state.isLoading = true;
       })

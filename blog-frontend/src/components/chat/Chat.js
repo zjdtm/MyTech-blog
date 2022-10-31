@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { getChat, getMessages, postMessage } from 'features/chat/chatSlice';
+import {
+  createChat,
+  getChat,
+  getMessages,
+  postMessage,
+} from 'features/chat/chatSlice';
 import ChatBox from './ChatBox';
 import { useRef } from 'react';
+import { io } from 'socket.io-client';
+import { current } from '@reduxjs/toolkit';
+import { createPost } from 'features/posts/postsSlice';
 
 const Container = styled.div`
   grid-area: chat;
@@ -95,7 +103,30 @@ const Chat = () => {
   );
   const [currentChat, setCurrentChat] = useState(null);
   const [newMessage, setNewMessage] = useState('');
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+  const socket = useRef(io('ws://localhost:8900'));
   const scrollRef = useRef();
+
+  useEffect(() => {
+    socket.current = io('ws://localhost:8900');
+    socket.current.on('getMessage', (data) => {
+      setArrivalMessage({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
+    });
+  }, []);
+
+  const handleRoomClick = async (c) => {
+    const chat = {
+      senderId: user._id,
+      receiverId: c,
+    };
+
+    dispatch(createChat(chat));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const message = {
@@ -104,14 +135,34 @@ const Chat = () => {
       conversationId: currentChat._id,
     };
 
+    const receiverId = currentChat.members.find(
+      (member) => member !== user._id,
+    );
+
+    socket.current.emit('sendMessage', {
+      senderId: user._id,
+      receiverId: receiverId,
+      text: newMessage,
+    });
+
     dispatch(postMessage(message));
     dispatch(getMessages(currentChat._id));
     setNewMessage('');
   };
 
+  // useEffect(() => {
+  //   arrivalMessage &&
+  //   currentChat?.members.includes(arrivalMessage.sender) &&
+  //   dispatch
+  // })
+
   useEffect(() => {
     if (user) {
       dispatch(getChat(user._id));
+      socket.current.emit('addUser', user._id);
+      socket.current.on('getUsers', (users) => {
+        console.log(users);
+      });
     }
 
     if (currentChat) {
