@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { format } from 'timeago.js';
 
 const ChatBoxContainer = styled.div`
   display: flex;
@@ -32,14 +33,14 @@ const ChatBottom = styled.div`
   margin-top: 10px;
 `;
 
-const ChatBox = ({ own }) => {
+const ChatBox = ({ message, own }) => {
   return (
     <ChatBoxContainer props={own}>
       <ChatTop>
         <img src="/assets/img/banana.png" alt="프로필 이미지" />
-        <p>MessageTextMessageTextMessageTex MessageTextMessageTextMessageTex</p>
+        <p>{message.text}</p>
       </ChatTop>
-      <ChatBottom>1hour ago</ChatBottom>
+      <ChatBottom>{format(message.createdAt)}</ChatBottom>
     </ChatBoxContainer>
   );
 };

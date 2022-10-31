@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { getChat } from 'features/chat/chatSlice';
-import Conversation from './Conversation';
+import { getChat, getMessages, postMessage } from 'features/chat/chatSlice';
 import ChatBox from './ChatBox';
+import { useRef } from 'react';
 
 const Container = styled.div`
   grid-area: chat;
@@ -38,17 +38,25 @@ const ChatRoom = styled.div`
   color: white;
   font-size: 25px;
   cursor: pointer;
+
+  &:hover {
+    img {
+      width: 90px;
+      height: 90px;
+    }
+  }
+`;
+
+const NoUserChatRoom = styled.div`
+  margin: 30%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ChatImage = styled.img`
   width: 100px;
   height: 100px;
   object-fit: cover;
-
-  &:hover {
-    width: 90px;
-    height: 90px;
-  }
 `;
 
 const ChatContent = styled.div`
@@ -82,35 +90,80 @@ const ChatInput = styled.div`
 const Chat = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { chats, isLoading, isSuccess } = useSelector((state) => state.chats);
+  const { chats, chatMessages, isLoading, isSuccess } = useSelector(
+    (state) => state.chats,
+  );
+  const [currentChat, setCurrentChat] = useState(null);
+  const [newMessage, setNewMessage] = useState('');
+  const scrollRef = useRef();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const message = {
+      sender: user._id,
+      text: newMessage,
+      conversationId: currentChat._id,
+    };
+
+    dispatch(postMessage(message));
+    dispatch(getMessages(currentChat._id));
+    setNewMessage('');
+  };
 
   useEffect(() => {
     if (user) {
       dispatch(getChat(user._id));
     }
-  }, [user, dispatch]);
+
+    if (currentChat) {
+      dispatch(getMessages(currentChat._id));
+    }
+  }, [user, currentChat, dispatch]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
 
   return (
     <Container>
       <ChatSidebar>
         <ChatRoomContainer>
-          {chats.map((c) => (
-            <ChatRoom key={c._id}>
+          {chats && user ? (
+            chats.map((c) => (
+              <ChatRoom key={c._id} onClick={() => setCurrentChat(c)}>
+                <ChatImage src="/assets/img/monkey.png" alt="로고" />
+                {user ? (
+                  <span>{c.members.find((m) => m !== user._id)}</span>
+                ) : null}
+              </ChatRoom>
+            ))
+          ) : (
+            <NoUserChatRoom>
               <ChatImage src="/assets/img/monkey.png" alt="로고" />
-              <span>{c.members.find((m) => m !== user._id)}</span>
-            </ChatRoom>
-          ))}
+              <span>회원만 가능합니다.</span>
+            </NoUserChatRoom>
+          )}
         </ChatRoomContainer>
       </ChatSidebar>
       <ChatContent>
-        <ChatBox own={true} />
-        <ChatBox />
-        <ChatBox own={true} />
-        <ChatBox />
+        {chats && user
+          ? chatMessages.map((m) => (
+              <div ref={scrollRef}>
+                <ChatBox key={m._id} message={m} own={m.sender === user._id} />
+              </div>
+            ))
+          : null}
       </ChatContent>
       <ChatInput>
-        <textarea placeholder="write something..."></textarea>
-        <button>send</button>
+        {chats && user ? (
+          <>
+            <textarea
+              placeholder="write something..."
+              onChange={(e) => setNewMessage(e.target.value)}
+              value={newMessage}
+            ></textarea>
+            <button onClick={handleSubmit}>send</button>
+          </>
+        ) : null}
       </ChatInput>
     </Container>
   );

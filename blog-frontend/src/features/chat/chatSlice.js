@@ -9,11 +9,22 @@ export const getChat = createAsyncThunk('chat/getChat', async (userId) => {
   }
 });
 
-export const getUserfriend = createAsyncThunk(
-  'chat/getUser',
-  async (friendId) => {
+export const getMessages = createAsyncThunk(
+  'chat/getMessages',
+  async (conversationId) => {
     try {
-      return await chatService.getUserfriend(friendId);
+      return await chatService.getMessages(conversationId);
+    } catch (e) {
+      console.log(e);
+    }
+  },
+);
+
+export const postMessage = createAsyncThunk(
+  'chat/postMessage',
+  async (message) => {
+    try {
+      return await chatService.postMessage(message);
     } catch (e) {
       console.log(e);
     }
@@ -22,7 +33,7 @@ export const getUserfriend = createAsyncThunk(
 
 const initialState = {
   chats: [],
-  friendUsers: [],
+  chatMessages: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -56,25 +67,28 @@ const chatSlice = createSlice({
         state.message = action.payload;
         state.chats = null;
       })
-      .addCase(getUserfriend.pending, (state) => {
+      .addCase(getMessages.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getUserfriend.fulfilled, (state, action) => {
+      .addCase(getMessages.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        // state.friendUsers.push(action.payload);
-        // state.friendUsers = [
-        //   ...new Set(state.friendUsers.map(JSON.stringify)),
-        // ].map(JSON.parse);
-        if (!state.friendUsers.includes(action.payload._id)) {
-          state.friendUsers.push(action.payload);
-        }
+        state.chatMessages = action.payload;
       })
-      .addCase(getUserfriend.rejected, (state, action) => {
+      .addCase(getMessages.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-        state.friendUsers = null;
+        state.chatMessages = null;
+      })
+      .addCase(postMessage.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // state.chatMessages += action.payload;
+      })
+      .addCase(postMessage.rejected, (state, action) => {
+        state.message = action.payload;
+        state.chatMessages = null;
       });
   },
 });

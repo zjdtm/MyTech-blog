@@ -7,14 +7,20 @@ const getChat = async (userId) => {
   return response.data;
 };
 
-const getUserfriend = async (friendId) => {
-  const response = await axios.get('/api/user?userId=' + friendId);
+const getMessages = async (conversationId) => {
+  const response = await axios.get('/api/messages/' + conversationId);
+  return response.data;
+};
+
+const postMessage = async (message) => {
+  const response = await axios.post('/api/messages', message);
   return response.data;
 };
 
 const chatService = {
   getChat,
-  getUserfriend,
+  getMessages,
+  postMessage,
 };
 
 export default chatService;
