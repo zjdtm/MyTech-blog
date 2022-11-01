@@ -48,6 +48,13 @@
   "resolved" "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz"
   "version" "1.2.1"
 
+"@koa/cors@^4.0.0":
+  "integrity" "sha512-Y4RrbvGTlAaa04DBoPBWJqDR5gPj32OOz827ULXfgB1F7piD1MB/zwn8JR2LAnvdILhxUbXbkXGWuNVsFuVFCQ=="
+  "resolved" "https://registry.npmjs.org/@koa/cors/-/cors-4.0.0.tgz"
+  "version" "4.0.0"
+  dependencies:
+    "vary" "^1.1.2"
+
 "@mapbox/node-pre-gyp@^1.0.10":
   "integrity" "sha512-4ySo4CjzStuprMwk35H5pPbkymjv1SF3jGLj6rAHp/xT/RF7TL7bd9CTm1xDY49K2qF7jmR/g7k+SkLETP6opA=="
   "resolved" "https://registry.npmjs.org/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.10.tgz"

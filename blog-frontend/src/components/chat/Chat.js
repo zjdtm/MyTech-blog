@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  createChat,
-  getChat,
-  getMessages,
-  postMessage,
-} from 'features/chat/chatSlice';
+import { getChat, getMessages, postMessage } from 'features/chat/chatSlice';
 import ChatBox from './ChatBox';
 import { useRef } from 'react';
 import { io } from 'socket.io-client';
-import { current } from '@reduxjs/toolkit';
-import { createPost } from 'features/posts/postsSlice';
 
 const Container = styled.div`
   grid-area: chat;
@@ -35,11 +28,11 @@ const ChatRoomContainer = styled.div`
 `;
 
 const ChatRoom = styled.div`
-  width: 30%;
+  width: 28%;
   height: 100%;
   align-items: center;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   background-color: #ffd400;
   margin: 10px;
   border-radius: 20%;
@@ -49,21 +42,15 @@ const ChatRoom = styled.div`
 
   &:hover {
     img {
-      width: 90px;
-      height: 90px;
+      width: 80px;
+      height: 80px;
     }
   }
 `;
 
-const NoUserChatRoom = styled.div`
-  margin: 30%;
-  display: flex;
-  flex-direction: column;
-`;
-
 const ChatImage = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
 `;
 
@@ -98,33 +85,15 @@ const ChatInput = styled.div`
 const Chat = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { chats, chatMessages, isLoading, isSuccess } = useSelector(
-    (state) => state.chats,
-  );
-  const [currentChat, setCurrentChat] = useState(null);
+  const { chats, chatMessages } = useSelector((state) => state.chats);
+  const [roomName, setRoomName] = useState(null);
   const [newMessage, setNewMessage] = useState('');
-  const [arrivalMessage, setArrivalMessage] = useState(null);
   const socket = useRef(io('ws://localhost:8900'));
   const scrollRef = useRef();
 
-  useEffect(() => {
-    socket.current = io('ws://localhost:8900');
-    socket.current.on('getMessage', (data) => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
-  }, []);
-
-  const handleRoomClick = async (c) => {
-    const chat = {
-      senderId: user._id,
-      receiverId: c,
-    };
-
-    dispatch(createChat(chat));
+  const RoomEntry = (r) => {
+    setRoomName(r);
+    dispatch(getMessages(r));
   };
 
   const handleSubmit = async (e) => {
@@ -132,43 +101,19 @@ const Chat = () => {
     const message = {
       sender: user._id,
       text: newMessage,
-      conversationId: currentChat._id,
+      conversationId: roomName,
     };
 
-    const receiverId = currentChat.members.find(
-      (member) => member !== user._id,
-    );
-
-    socket.current.emit('sendMessage', {
-      senderId: user._id,
-      receiverId: receiverId,
-      text: newMessage,
-    });
-
     dispatch(postMessage(message));
-    dispatch(getMessages(currentChat._id));
+    dispatch(getMessages(roomName));
     setNewMessage('');
   };
 
-  // useEffect(() => {
-  //   arrivalMessage &&
-  //   currentChat?.members.includes(arrivalMessage.sender) &&
-  //   dispatch
-  // })
-
   useEffect(() => {
-    if (user) {
-      dispatch(getChat(user._id));
-      socket.current.emit('addUser', user._id);
-      socket.current.on('getUsers', (users) => {
-        console.log(users);
-      });
-    }
+    socket.current.emit('addUser', user._id);
+  }, [user]);
 
-    if (currentChat) {
-      dispatch(getMessages(currentChat._id));
-    }
-  }, [user, currentChat, dispatch]);
+  console.log(socket);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -178,31 +123,33 @@ const Chat = () => {
     <Container>
       <ChatSidebar>
         <ChatRoomContainer>
-          {chats && user ? (
-            chats.map((c) => (
-              <ChatRoom key={c._id} onClick={() => setCurrentChat(c)}>
-                <ChatImage src="/assets/img/monkey.png" alt="로고" />
-                {user ? (
-                  <span>{c.members.find((m) => m !== user._id)}</span>
-                ) : null}
-              </ChatRoom>
-            ))
-          ) : (
-            <NoUserChatRoom>
-              <ChatImage src="/assets/img/monkey.png" alt="로고" />
-              <span>회원만 가능합니다.</span>
-            </NoUserChatRoom>
-          )}
+          <ChatRoom onClick={() => RoomEntry('back-end')}>
+            <ChatImage src="/assets/img/monkey.png" alt="로고" />
+            <span>백엔드</span>
+          </ChatRoom>
+          <ChatRoom onClick={() => RoomEntry('front-end')}>
+            <ChatImage src="/assets/img/monkey.png" alt="로고" />
+            <span>프론트엔드</span>
+          </ChatRoom>
+          <ChatRoom onClick={() => RoomEntry('community')}>
+            <ChatImage src="/assets/img/monkey.png" alt="로고" />
+            <span>커뮤니티</span>
+          </ChatRoom>
         </ChatRoomContainer>
       </ChatSidebar>
       <ChatContent>
-        {chats && user
-          ? chatMessages.map((m) => (
-              <div ref={scrollRef}>
-                <ChatBox key={m._id} message={m} own={m.sender === user._id} />
-              </div>
-            ))
-          : null}
+        {chats && user ? (
+          chatMessages.map((m) => (
+            <div key={m._id} ref={scrollRef}>
+              <ChatBox key={m._id} message={m} own={m.sender === user._id} />
+            </div>
+          ))
+        ) : (
+          <div style={{ margin: '20%' }}>
+            <ChatImage src="/assets/img/monkey.png" alt="로고" />
+            <span>회원만 사용할 수 있어요</span>
+          </div>
+        )}
       </ChatContent>
       <ChatInput>
         {chats && user ? (
