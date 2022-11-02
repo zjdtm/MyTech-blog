@@ -32,24 +32,50 @@ app.use(jwtMiddleware);
 app.use(router.routes()).use(router.allowedMethods());
 
 const port = PORT || 4000;
-app.listen(port, () => {
+// app.listen(port, () => {
+//   console.log(`Listening to port ${port}`);
+// });
+
+const httpServer = createServer(app.callback());
+
+httpServer.listen(port, () => {
   console.log(`Listening to port ${port}`);
 });
 
-const httpServer = createServer(app.callback());
 const io = new Server(httpServer, {
   cors: {
     origin: 'http://localhost:3000',
+    credentials: true,
   },
 });
 
-let users = [];
+const addUser = (userId, socketId) => {
+  !users.some((user) => user.userId === userId) &&
+    users.push({ userId, socketId });
+};
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
+const removeUser = (scoketId) => {
+  users = users.filter((user) => user.socketId !== scoketId);
+};
+
+io.on('connect', (socket) => {
+  console.log('a user connect');
+
   socket.on('addUser', (userId) => {
-    console.log(userId);
+    addUser(userId, socket.id);
+    io.emit('getUsers', users);
+  });
+
+  socket.on('sendMessage', ({ senderId, receiverId, text }) => {
+    io.emit('getMessage', {
+      senderId,
+      text,
+    });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('a user disconnected!');
+    removeUser(socket.id);
+    io.emit('getUsers', users);
   });
 });
-
-httpServer.listen(8900);

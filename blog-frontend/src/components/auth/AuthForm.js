@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { login, register, reset } from '../../features/auth/authSlice';
 import Spinner from 'components/common/Spinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const AuthFormBlock = styled.div`
   img {
@@ -46,6 +49,31 @@ const StyledInput = styled.input`
   }
 `;
 
+const StyledInputProfile = styled.div`
+  width: 100px;
+  height: 100px;
+  margin-right: 80px;
+  position: relative;
+
+  img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid gray;
+    object-fit: cover;
+  }
+
+  label {
+    text-align: center;
+    position: absolute;
+    width: 20px;
+    border-radius: 50%;
+    background-color: white;
+    margin: 75%;
+    cursor: pointer;
+  }
+`;
+
 const Button = styled.button`
   border-radius: 10px;
   background-color: black;
@@ -53,7 +81,7 @@ const Button = styled.button`
 `;
 
 const AuthFooter = styled.div`
-  margin-top: 10px;
+  margin-top: -8%;
   text-align: center;
 `;
 
@@ -64,14 +92,18 @@ const textMap = {
 
 const AuthForm = ({ type }) => {
   const text = textMap[type];
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
     username: '',
     password: '',
     passwordConfirm: '',
+    profilePicture: '',
   });
 
-  const { email, username, password, passwordConfirm } = formData;
+  const { email, username, password, passwordConfirm, profilePicture } =
+    formData;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -104,7 +136,37 @@ const AuthForm = ({ type }) => {
     }));
   };
 
-  const onSubmit = (e) => {
+  const onChangeImage = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: file,
+    }));
+  };
+
+  const uploadImage = async () => {
+    const data = new FormData();
+    data.append('file', image);
+    data.append('upload_preset', 'rulvkvph');
+
+    try {
+      let res = await fetch(
+        'https://api.cloudinary.com/v1_1/djp1gbf5d/image/upload',
+        {
+          method: 'post',
+          body: data,
+        },
+      );
+      const urlData = await res.json();
+      return urlData.url;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const onSubmit = async (e) => {
     if (text === '회원가입') {
       e.preventDefault();
 
@@ -122,6 +184,11 @@ const AuthForm = ({ type }) => {
           username,
           password,
         };
+
+        if (image) {
+          const url = await uploadImage(profilePicture);
+          console.log(url);
+        }
 
         dispatch(register(userData));
       }
@@ -143,6 +210,25 @@ const AuthForm = ({ type }) => {
       <img src="assets/img/tree.png" alt="tree" />
       <h1>{text}</h1>
       <LoginForm onSubmit={onSubmit}>
+        {type === 'register' && (
+          <StyledInputProfile>
+            <img
+              src={imagePreview || '/assets/img/profile.png'}
+              alt="profileImg"
+            />
+            <label htmlFor="image">
+              <FontAwesomeIcon icon={faPlus} />
+            </label>
+            <StyledInput
+              id="image"
+              name="profilePicture"
+              type="file"
+              hidden
+              accept="image/png, image/jpeg"
+              onChange={onChangeImage}
+            />
+          </StyledInputProfile>
+        )}
         <StyledInput
           autoComplete="username"
           name="username"
@@ -185,7 +271,7 @@ const AuthForm = ({ type }) => {
         {type === 'login' ? (
           <Link to="/register">회원가입</Link>
         ) : (
-          <Link to="/login">로그인</Link>
+          <Link to="/login">이미 회원이신가요 ?</Link>
         )}
       </AuthFooter>
       <ToastContainer />

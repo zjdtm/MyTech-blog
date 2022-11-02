@@ -85,96 +85,93 @@ const ChatInput = styled.div`
 const Chat = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { chats, chatMessages } = useSelector((state) => state.chats);
+  const { chats, chatMessages, isSuccess } = useSelector(
+    (state) => state.chats,
+  );
   const [roomName, setRoomName] = useState(null);
   const [newMessage, setNewMessage] = useState('');
-  const socket = useRef(io('ws://localhost:8900'));
+  const [arrivalMessage, setArriverMessage] = useState(null);
+  const socket = useRef();
   const scrollRef = useRef();
 
   const RoomEntry = (r) => {
     setRoomName(r);
-    dispatch(getMessages(r));
-    // useEffect(() => {
-    //   socket.current = io('ws://localhost:8900');
-    //   socket.current.on('getMessage', (data) => {
-    //     setArrivalMessage({
-    //       sender: data.senderId,
-    //       text: data.text,
-    //       createdAt: Date.now(),
-    //     });
-    //   });
-    // }, []);
+  };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      const message = {
-        sender: user._id,
-        text: newMessage,
-        conversationId: roomName,
-      };
-
-      dispatch(postMessage(message));
-      dispatch(getMessages(roomName));
-      setNewMessage('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const message = {
+      sender: user._id,
+      text: newMessage,
+      conversationId: roomName,
     };
 
-    useEffect(() => {
-      socket.current.emit('addUser', user._id);
-    }, [user]);
+    socket.current.emit('sendMessage', {
+      senderId: user._id,
+      receiverId: roomName,
+      text: newMessage,
+    });
 
-    console.log(socket);
-
-    useEffect(() => {
-      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [chatMessages]);
-
-    return (
-      <Container>
-        <ChatSidebar>
-          <ChatRoomContainer>
-            <ChatRoom onClick={() => RoomEntry('back-end')}>
-              <ChatImage src="/assets/img/monkey.png" alt="로고" />
-              <span>백엔드</span>
-            </ChatRoom>
-            <ChatRoom onClick={() => RoomEntry('front-end')}>
-              <ChatImage src="/assets/img/monkey.png" alt="로고" />
-              <span>프론트엔드</span>
-            </ChatRoom>
-            <ChatRoom onClick={() => RoomEntry('community')}>
-              <ChatImage src="/assets/img/monkey.png" alt="로고" />
-              <span>커뮤니티</span>
-            </ChatRoom>
-          </ChatRoomContainer>
-        </ChatSidebar>
-        <ChatContent>
-          {chats && user ? (
-            chatMessages.map((m) => (
-              <div key={m._id} ref={scrollRef}>
-                <ChatBox key={m._id} message={m} own={m.sender === user._id} />
-              </div>
-            ))
-          ) : (
-            <div style={{ margin: '20%' }}>
-              <ChatImage src="/assets/img/monkey.png" alt="로고" />
-              <span>회원만 사용할 수 있어요</span>
-            </div>
-          )}
-        </ChatContent>
-        <ChatInput>
-          {chats && user ? (
-            <>
-              <textarea
-                placeholder="write something..."
-                onChange={(e) => setNewMessage(e.target.value)}
-                value={newMessage}
-              ></textarea>
-              <button onClick={handleSubmit}>send</button>
-            </>
-          ) : null}
-        </ChatInput>
-      </Container>
-    );
+    dispatch(postMessage(message));
+    dispatch(getMessages(roomName));
+    setNewMessage('');
   };
+
+  useEffect(() => {
+    socket.current = io('ws://localhost:4000');
+    socket.current.on('getMessage', dispatch(getMessages(roomName)));
+  }, [dispatch, roomName]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+
+  return (
+    <Container>
+      <ChatSidebar>
+        <ChatRoomContainer>
+          <ChatRoom onClick={() => RoomEntry('back-end')}>
+            <ChatImage src="/assets/img/monkey.png" alt="로고" />
+            <span>백엔드</span>
+          </ChatRoom>
+          <ChatRoom onClick={() => RoomEntry('front-end')}>
+            <ChatImage src="/assets/img/monkey.png" alt="로고" />
+            <span>프론트엔드</span>
+          </ChatRoom>
+          <ChatRoom onClick={() => RoomEntry('community')}>
+            <ChatImage src="/assets/img/monkey.png" alt="로고" />
+            <span>커뮤니티</span>
+          </ChatRoom>
+        </ChatRoomContainer>
+      </ChatSidebar>
+      <ChatContent>
+        {chats && user ? (
+          chatMessages.map((m) => (
+            <div key={m._id} ref={scrollRef}>
+              <ChatBox key={m._id} message={m} own={m.sender === user._id} />
+            </div>
+          ))
+        ) : (
+          <div style={{ margin: '20%' }}>
+            <ChatImage src="/assets/img/monkey.png" alt="로고" />
+            <span>회원만 사용할 수 있어요</span>
+          </div>
+        )}
+      </ChatContent>
+      <ChatInput>
+        {chats && user ? (
+          <>
+            <textarea
+              placeholder="write something..."
+              onChange={(e) => setNewMessage(e.target.value)}
+              value={newMessage}
+            ></textarea>
+            <button onClick={handleSubmit}>send</button>
+          </>
+        ) : null}
+      </ChatInput>
+    </Container>
+  );
 };
 
 export default Chat;
