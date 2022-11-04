@@ -8,6 +8,8 @@ import api from './api/index.js';
 import jwtMiddleware from './lib/jwtMiddleware.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import Message from './models/message.js';
+import User from './models/user.js';
 
 dotenv.config();
 const { PORT, MONGO_URI } = process.env;
@@ -32,15 +34,36 @@ app.use(jwtMiddleware);
 app.use(router.routes()).use(router.allowedMethods());
 
 const port = PORT || 4000;
-// app.listen(port, () => {
-//   console.log(`Listening to port ${port}`);
-// });
 
 const httpServer = createServer(app.callback());
 
 httpServer.listen(port, () => {
   console.log(`Listening to port ${port}`);
 });
+
+async function getLastMessagesFromRoom(room) {
+  let roomMessages = await Message.aggregate([
+    { $match: { to: room } },
+    { $group: { _id: '$date', messagesByDate: { $push: '$$ROOT' } } },
+  ]);
+  return roomMessages;
+}
+
+/* 02/11/2022
+      ↓
+   20220211
+*/
+function sortRoomMessagesByDate(messages) {
+  return messages.sort(function (a, b) {
+    let date1 = a._id.split('/');
+    let date2 = b._id.split('/');
+
+    date1 = date1[2] + date1[0] + date1[1];
+    date2 = date2[2] + date2[0] + date2[1];
+
+    return date1 < date2 ? -1 : 1;
+  });
+}
 
 const io = new Server(httpServer, {
   cors: {
@@ -49,33 +72,32 @@ const io = new Server(httpServer, {
   },
 });
 
-const addUser = (userId, socketId) => {
-  !users.some((user) => user.userId === userId) &&
-    users.push({ userId, socketId });
-};
-
-const removeUser = (scoketId) => {
-  users = users.filter((user) => user.socketId !== scoketId);
-};
-
-io.on('connect', (socket) => {
-  console.log('a user connect');
-
-  socket.on('addUser', (userId) => {
-    addUser(userId, socket.id);
-    io.emit('getUsers', users);
+io.on('connection', (socket) => {
+  socket.on('new-user', async () => {
+    const members = await User.find();
+    io.emit('new-user', members);
   });
 
-  socket.on('sendMessage', ({ senderId, receiverId, text }) => {
-    io.emit('getMessage', {
-      senderId,
-      text,
+  socket.on('join-room', async (room) => {
+    socket.join(room);
+    let roomMessages = await getLastMessagesFromRoom(room);
+    roomMessages = sortRoomMessagesByDate(roomMessages);
+    socket.emit('room-messages', roomMessages);
+  });
+
+  socket.on('message-room', async (content, sender, time, date, room) => {
+    const newMessage = await Message.create({
+      content,
+      from: sender,
+      time,
+      date,
+      to: room,
     });
-  });
+    let roomMessages = await getLastMessagesFromRoom(room);
+    roomMessages = sortRoomMessagesByDate(roomMessages);
 
-  socket.on('disconnect', () => {
-    console.log('a user disconnected!');
-    removeUser(socket.id);
-    io.emit('getUsers', users);
+    io.to(room).emit('room-messages', roomMessages);
+
+    socket.broadcast.emit('alarmOn', room);
   });
 });

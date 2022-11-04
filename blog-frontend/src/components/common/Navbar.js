@@ -148,6 +148,17 @@ const Navbar = () => {
           {user ? (
             <>
               <span>{user.username}님 환영합니다</span>
+              <img
+                src={user.profilePicture}
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  marginRight: '10px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                }}
+                alt="프로필 이미지"
+              />
               <Link to="/write">
                 <span>글작성</span>
               </Link>

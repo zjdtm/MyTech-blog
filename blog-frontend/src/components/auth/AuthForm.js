@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -8,7 +8,7 @@ import { login, register, reset } from '../../features/auth/authSlice';
 import Spinner from 'components/common/Spinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
+import { AppContext } from 'context/appContext';
 
 const AuthFormBlock = styled.div`
   img {
@@ -63,13 +63,15 @@ const StyledInputProfile = styled.div`
     object-fit: cover;
   }
 
-  label {
+  .uploadImage {
     text-align: center;
     position: absolute;
     width: 20px;
+    height: 20px;
     border-radius: 50%;
     background-color: white;
-    margin: 75%;
+    bottom: 0;
+    right: -20px;
     cursor: pointer;
   }
 `;
@@ -92,6 +94,7 @@ const textMap = {
 
 const AuthForm = ({ type }) => {
   const text = textMap[type];
+  const { socket } = useContext(AppContext);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
@@ -102,8 +105,7 @@ const AuthForm = ({ type }) => {
     profilePicture: '',
   });
 
-  const { email, username, password, passwordConfirm, profilePicture } =
-    formData;
+  const { email, username, password, passwordConfirm } = formData;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -118,6 +120,7 @@ const AuthForm = ({ type }) => {
     }
 
     if (isSuccess || user) {
+      socket.emit('new-user');
       navigate('/');
       try {
         localStorage.setItem('user', JSON.stringify(user));
@@ -127,22 +130,22 @@ const AuthForm = ({ type }) => {
     }
 
     dispatch(reset());
-  }, [user, isError, isSuccess, message, navigate, dispatch]);
+  }, [user, isError, socket, isSuccess, message, navigate, dispatch]);
 
   const onChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
   const onChangeImage = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file));
+    const image = e.target.files[0];
+    setImage(image);
+    setImagePreview(URL.createObjectURL(image));
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: file,
+      [e.target.name]: image,
     }));
   };
 
@@ -160,6 +163,7 @@ const AuthForm = ({ type }) => {
         },
       );
       const urlData = await res.json();
+
       return urlData.url;
     } catch (e) {
       console.log(e);
@@ -183,12 +187,8 @@ const AuthForm = ({ type }) => {
           email,
           username,
           password,
+          profilePicture: image ? await uploadImage(image) : '',
         };
-
-        if (image) {
-          const url = await uploadImage(profilePicture);
-          console.log(url);
-        }
 
         dispatch(register(userData));
       }
@@ -217,7 +217,7 @@ const AuthForm = ({ type }) => {
               alt="profileImg"
             />
             <label htmlFor="image">
-              <FontAwesomeIcon icon={faPlus} />
+              <FontAwesomeIcon className="uploadImage" icon={faPlus} />
             </label>
             <StyledInput
               id="image"

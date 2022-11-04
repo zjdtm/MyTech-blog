@@ -11,6 +11,14 @@ const UserSchema = new Schema(
       type: String,
       default: '',
     },
+    newMessages: {
+      type: Object,
+      default: {},
+    },
+    status: {
+      type: String,
+      default: 'online',
+    },
     isAdmin: {
       type: Boolean,
       default: false,

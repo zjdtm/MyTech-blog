@@ -18,6 +18,7 @@ export const register = async (ctx) => {
         ),
       )
       .required(),
+    profilePicture: Joi.string(),
   });
 
   const result = schema.validate(ctx.request.body);
@@ -27,7 +28,8 @@ export const register = async (ctx) => {
     return;
   }
 
-  const { username, email, password } = ctx.request.body;
+  const { username, email, password, profilePicture } = ctx.request.body;
+
   try {
     const exists = await User.findByUsername(username);
     if (exists) {
@@ -37,6 +39,7 @@ export const register = async (ctx) => {
     const user = new User({
       username,
       email,
+      profilePicture,
     });
 
     await user.setPassword(password);

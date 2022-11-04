@@ -57,7 +57,7 @@ const AuthTemplate = ({ children }) => {
         <Welcome>
           <LoginBox>{children}</LoginBox>
           <RightBox>
-            <Banana src="/assets/img/banana.png" alt="flower2" />
+            <Banana src="/assets/img/banana.png" alt="banana" />
           </RightBox>
         </Welcome>
       </AuthTemplateContainer>

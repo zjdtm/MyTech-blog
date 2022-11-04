@@ -90,7 +90,6 @@ const Chat = () => {
   );
   const [roomName, setRoomName] = useState(null);
   const [newMessage, setNewMessage] = useState('');
-  const [arrivalMessage, setArriverMessage] = useState(null);
   const socket = useRef();
   const scrollRef = useRef();
 
@@ -119,7 +118,9 @@ const Chat = () => {
 
   useEffect(() => {
     socket.current = io('ws://localhost:4000');
-    socket.current.on('getMessage', dispatch(getMessages(roomName)));
+    if (socket.current.on('getMessage', dispatch(getMessages(roomName)))) {
+      dispatch(getMessages(roomName));
+    }
   }, [dispatch, roomName]);
 
   useEffect(() => {

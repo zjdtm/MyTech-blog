@@ -49,6 +49,16 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    alarmOn: (state, { payload }) => {
+      if (state.newMessages[payload]) {
+        state.newMessages[payload] = state.newMessages[payload] + 1;
+      } else {
+        state.newMessages[payload] = 1;
+      }
+    },
+    alarmOff: (state, { payload }) => {
+      delete state.newMessages[payload];
+    },
     reset: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
@@ -92,5 +102,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, alarmOn, alarmOff } = authSlice.actions;
 export default authSlice.reducer;
